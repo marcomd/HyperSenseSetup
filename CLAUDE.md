@@ -16,6 +16,7 @@ These READMEs are kept up-to-date and contain detailed implementation guides, AP
 - Use Ruby on Rails 8.1 best practices
 - Apply TDD (Test-Driven Development) - write tests first
 - Release atomic commits (complete work: code + tests together)
+- Always use the YARD-style and write clear code with comments describing the intention: methods, classes, etc.
 - Ensure RuboCop passes before considering work complete (backend)
 - Ensure ESLint passes before considering work complete (frontend)
 - Increase the version number in this way (if a fix increase the patch else the minor for features):
