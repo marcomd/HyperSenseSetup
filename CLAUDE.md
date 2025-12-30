@@ -22,7 +22,7 @@ These READMEs are kept up-to-date and contain detailed implementation guides, AP
 - Increase the version number in this way (if a fix increase the patch else the minor for features):
   - on the backend the VERSION is in config/application.rb and on the README
   - on the frontend the VERSION is in package.json and on the README
-- Add the version entry on the CHANGELOG.md
+- Add the version entry on the backend/CHANGELOG.md and/or frontend/CHANGELOG.md based on where the change was made
 - Update README.md at the end of each implementation with the change
 
 ## Commands
@@ -89,7 +89,7 @@ npm run test:all                  # Run unit + E2E tests
 
 ## Architecture
 
-HyperSense is an autonomous AI trading agent for cryptocurrency markets using Claude AI for reasoning.
+HyperSense is an autonomous AI trading agent for cryptocurrency markets using LLM AI for reasoning (supports Anthropic, Gemini, Ollama).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -141,6 +141,7 @@ See `backend/README.md` for detailed architecture including Risk Management Laye
   - `DataIngestion::` - External API fetchers (Binance, Fear & Greed, news, whale alerts)
   - `Indicators::` - Technical analysis (EMA, RSI, MACD, Pivot Points)
   - `Forecasting::` - Prophet ML price predictions
+  - `LLM::` - LLM-agnostic client wrapper (supports Anthropic, Gemini, Ollama)
   - `Reasoning::` - LLM agents with weighted context (see `backend/README.md` for context weights)
   - `Execution::` - Trade execution via Hyperliquid
   - `Risk::` - Risk management (position limits, circuit breaker)
@@ -219,18 +220,27 @@ React dashboard in `frontend/src/`:
 Configure via `.env` file (copy from `backend/.env.example`):
 
 ```bash
-# Required: Anthropic API key for AI reasoning
+# LLM Provider: anthropic, gemini, or ollama
+LLM_PROVIDER=anthropic
+
+# Anthropic (required if LLM_PROVIDER=anthropic)
 ANTHROPIC_API_KEY=your_anthropic_api_key
+ANTHROPIC_MODEL=claude-sonnet-4-5
+
+# Gemini (required if LLM_PROVIDER=gemini)
+# GEMINI_API_KEY=your_gemini_api_key
+# GEMINI_MODEL=gemini-2.0-flash-exp
+
+# Ollama (required if LLM_PROVIDER=ollama)
+# OLLAMA_API_BASE=http://localhost:11434/v1
+# OLLAMA_MODEL=llama3
 
 # Required: Hyperliquid credentials for trading
 HYPERLIQUID_PRIVATE_KEY=your_wallet_private_key
 HYPERLIQUID_ADDRESS=your_wallet_address
-
-# Optional: Override default LLM model
-LLM_MODEL=claude-sonnet-4-5
 ```
 
-Settings are accessed via the Config gem (`Settings.anthropic.api_key`, `Settings.llm.model`).
+Settings are accessed via the Config gem (`Settings.llm.provider`, `Settings.llm.anthropic.model`).
 Hyperliquid credentials use direct `ENV.fetch()` for security.
 
 ## Implementation Status
