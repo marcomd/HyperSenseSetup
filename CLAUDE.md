@@ -24,6 +24,8 @@ These READMEs are kept up-to-date and contain detailed implementation guides, AP
   - on the frontend the VERSION is in package.json and on the README
 - Add the version entry on the backend/CHANGELOG.md and/or frontend/CHANGELOG.md based on where the change was made
 - Update README.md at the end of each implementation with the change
+- **Apply DRY (Don't Repeat Yourself)**: Never duplicate logic. If the same data or functionality is needed in multiple places, create a single source of truth (shared context, service, or endpoint) and reuse it everywhere.
+- **Write clean, consistent code**: Before adding new code, search for existing implementations that do something similar. Refactor to share common logic rather than creating parallel implementations. When in doubt, consolidate.
 
 ## Commands
 
@@ -89,7 +91,7 @@ npm run test:all                  # Run unit + E2E tests
 
 ## Architecture
 
-HyperSense is an autonomous AI trading agent for cryptocurrency markets using LLM AI for reasoning (supports Anthropic, Gemini, Ollama).
+HyperSense is an autonomous AI trading agent for cryptocurrency markets using LLM AI for reasoning (supports Anthropic, Gemini, Ollama, OpenAI).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -141,7 +143,7 @@ See `backend/README.md` for detailed architecture including Risk Management Laye
   - `DataIngestion::` - External API fetchers (Binance, Fear & Greed, news, whale alerts)
   - `Indicators::` - Technical analysis (EMA, RSI, MACD, Pivot Points)
   - `Forecasting::` - Prophet ML price predictions
-  - `LLM::` - LLM-agnostic client wrapper (supports Anthropic, Gemini, Ollama)
+  - `LLM::` - LLM-agnostic client wrapper (supports Anthropic, Gemini, Ollama, OpenAI)
   - `Reasoning::` - LLM agents with weighted context (see `backend/README.md` for context weights)
   - `Execution::` - Trade execution via Hyperliquid
   - `Risk::` - Risk management (position limits, circuit breaker)
@@ -220,7 +222,7 @@ React dashboard in `frontend/src/`:
 Configure via `.env` file (copy from `backend/.env.example`):
 
 ```bash
-# LLM Provider: anthropic, gemini, or ollama
+# LLM Provider: anthropic, gemini, ollama, or openai
 LLM_PROVIDER=anthropic
 
 # Anthropic (required if LLM_PROVIDER=anthropic)
@@ -230,6 +232,10 @@ ANTHROPIC_MODEL=claude-sonnet-4-5
 # Gemini (required if LLM_PROVIDER=gemini)
 # GEMINI_API_KEY=your_gemini_api_key
 # GEMINI_MODEL=gemini-2.0-flash-exp
+
+# OpenAI (required if LLM_PROVIDER=openai)
+# OPENAI_API_KEY=your_openai_api_key
+# OPENAI_MODEL=gpt-5.2
 
 # Ollama (required if LLM_PROVIDER=ollama)
 # OLLAMA_API_BASE=http://localhost:11434/v1

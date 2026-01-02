@@ -140,6 +140,27 @@ Generally speaking, when the RSI goes below the 70 % level, this can be seen as 
 Like all other indicators and financial metrics, the signals can be misleading, so it is best not to use them as a direct sell and buy signals.
 
 
+
+## Average True Range (ATR)
+
+A technical analysis tool measuring market volatility, not price direction, by averaging price fluctuations over a set period (usually 14 periods: atr_14) to show how much an asset typically moves. 
+
+A high ATR signals high volatility and large price swings, while a low ATR indicates low volatility, helping traders set stop-losses, determine position size, and understand trend strength, especially useful in crypto's volatile environment.
+
+What ATR tells you:
+- Volatility: Higher ATR means bigger price swings (more volatile); lower ATR means smaller price swings (more stable).
+- Non-Directional: It shows how much price moves, not up or down, though rising ATR can confirm strong trends.
+- Gaps & Gaps: It accounts for price gaps by using the "True Range," the largest of the current range, previous close to current high, or previous close to current low.
+
+How traders use ATR in crypto:
+- Stop-Losses: Set wider stops during high ATR periods and tighter stops during low ATR periods to adapt to market conditions.
+- Position Sizing: Adjust position size based on volatility; smaller positions in high ATR markets, larger in low ATR markets.
+- Trend Strength: A rising ATR can confirm a strong trend, while prolonged low ATR might signal consolidation before a breakout.
+
+In short, ATR helps traders manage risk and volatility in fast-moving crypto markets by quantifying price movement, allowing for dynamic adjustments to trading strategies.
+
+
+
 ## Moving Average Convergence Divergence (MACD)
 
 The MACD is a trend-following momentum indicator. It subtracts the 26-period EMA from the 12-period EMA and measures the relationship between two EMA's.
