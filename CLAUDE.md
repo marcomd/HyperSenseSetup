@@ -23,7 +23,7 @@ These READMEs are kept up-to-date and contain detailed implementation guides, AP
   - on the backend the VERSION is in config/application.rb and on the README
   - on the frontend the VERSION is in package.json and on the README
 - Add the version entry on the backend/CHANGELOG.md and/or frontend/CHANGELOG.md based on where the change was made
-- Update README.md at the end of each implementation with the change
+- Update the README content: check whether the changes have changed the content, if so, apply the corrections.
 - **Apply DRY (Don't Repeat Yourself)**: Never duplicate logic. If the same data or functionality is needed in multiple places, create a single source of truth (shared context, service, or endpoint) and reuse it everywhere.
 - **Write clean, consistent code**: Before adding new code, search for existing implementations that do something similar. Refactor to share common logic rather than creating parallel implementations. When in doubt, consolidate.
 
