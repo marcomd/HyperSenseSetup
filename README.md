@@ -61,6 +61,13 @@ cp .env.docker.example .env
 - [Git](https://git-scm.com/downloads)
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
 
+## Repositories
+
+For more details see the two repositories
+
+- Backend https://github.com/marcomd/HyperSense
+- Frontend https://github.com/marcomd/HyperSenseDashboard
+
 ## Repository Structure
 
 After running the setup script, you'll have:
