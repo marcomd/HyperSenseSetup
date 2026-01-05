@@ -9,9 +9,10 @@ Run the full stack with a single command:
 ```bash
 # 1. Clone the repository
 git clone https://github.com/marcomd/HyperSenseSetup.git
-cd HyperSense
+cd HyperSenseSetup
 
-# TBD
+git clone https://github.com/marcomd/HyperSense.git backend
+git clone https://github.com/marcomd/HyperSenseDashboard.git frontend
 
 # 2. Configure environment
 cp .env.docker.example .env
