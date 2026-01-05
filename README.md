@@ -4,29 +4,83 @@ Autonomous AI trading agent for cryptocurrency markets using LLM reasoning (supp
 
 ## Quick Start with Docker
 
-Run the full stack with a single command:
+### Linux / macOS
 
 ```bash
-# 1. Clone the repository
+# 1. Clone the setup repository
 git clone https://github.com/marcomd/HyperSenseSetup.git
-cd HyperSense
+cd HyperSenseSetup
 
-# TBD
+# 2. Run setup script (clones backend and frontend repos)
+./setup.sh
 
-# 2. Configure environment
-cp .env.docker.example .env
-# Edit .env with your configuration (see below)
+# 3. Configure environment
+#    Edit .env with your settings (see Environment Configuration below)
 
-# 3. Build and start all services
+# 4. Build and start all services
 docker compose up -d --build
 
-# 4. Access the dashboard
+# 5. Access the dashboard
 open http://localhost
+```
+
+### Windows
+
+```cmd
+REM 1. Clone the setup repository
+git clone https://github.com/marcomd/HyperSenseSetup.git
+cd HyperSenseSetup
+
+REM 2. Run setup script (clones backend and frontend repos)
+setup.bat
+
+REM 3. Configure environment
+REM    Edit .env with your settings (see Environment Configuration below)
+
+REM 4. Build and start all services
+docker compose up -d --build
+
+REM 5. Access the dashboard at http://localhost
+```
+
+### Manual Setup
+
+If you prefer to clone manually:
+
+```bash
+git clone https://github.com/marcomd/HyperSenseSetup.git
+cd HyperSenseSetup
+git clone https://github.com/marcomd/HyperSense.git backend
+git clone https://github.com/marcomd/HyperSenseDashboard.git frontend
+cp .env.docker.example .env
+# Edit .env, then: docker compose up -d --build
 ```
 
 ## Prerequisites
 
+- [Git](https://git-scm.com/downloads)
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+
+## Repository Structure
+
+After running the setup script, you'll have:
+
+```
+HyperSenseSetup/
+├── docker-compose.yml      # Orchestrates all services
+├── .env.docker.example     # Environment template
+├── .env                    # Your configuration (created by setup)
+├── setup.sh                # Setup script (Linux/macOS)
+├── setup.bat               # Setup script (Windows)
+├── backend/                # Rails API (cloned from HyperSense)
+│   ├── Dockerfile
+│   ├── app/
+│   └── ...
+└── frontend/               # React dashboard (cloned from HyperSenseDashboard)
+    ├── Dockerfile
+    ├── src/
+    └── ...
+```
 
 ## Environment Configuration
 
