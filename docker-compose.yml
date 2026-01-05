@@ -1,0 +1,147 @@
+# HyperSense Docker Compose
+# Run the full stack with: docker compose up -d --build
+#
+# Services:
+#   - db: PostgreSQL 16 with multi-database setup
+#   - backend: Rails API server (Thruster)
+#   - worker: Solid Queue background jobs
+#   - frontend: React SPA (Nginx)
+#
+# Access: http://localhost
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hypersense}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hypersense_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-hypersense_production}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hypersense}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - hypersense
+
+  # Rails Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      RAILS_ENV: production
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      # Database configuration
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_DATABASE: ${POSTGRES_DB:-hypersense_production}
+      DATABASE_USER: ${POSTGRES_USER:-hypersense}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-hypersense_dev}
+      DATABASE_CACHE_DATABASE: ${POSTGRES_DB:-hypersense_production}_cache
+      DATABASE_QUEUE_DATABASE: ${POSTGRES_DB:-hypersense_production}_queue
+      DATABASE_CABLE_DATABASE: ${POSTGRES_DB:-hypersense_production}_cable
+      # LLM Provider Configuration
+      LLM_PROVIDER: ${LLM_PROVIDER:-anthropic}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-4-5}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash-exp}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+      OLLAMA_API_BASE: ${OLLAMA_API_BASE:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3}
+      # Hyperliquid Trading
+      HYPERLIQUID_PRIVATE_KEY: ${HYPERLIQUID_PRIVATE_KEY:-}
+      HYPERLIQUID_ADDRESS: ${HYPERLIQUID_ADDRESS:-}
+      # Mission Control Dashboard
+      MISSION_CONTROL_USER: ${MISSION_CONTROL_USER:-admin}
+      MISSION_CONTROL_PASSWORD: ${MISSION_CONTROL_PASSWORD:-}
+      # Disable Solid Queue in Puma (separate worker container handles jobs)
+      SOLID_QUEUE_IN_PUMA: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/up || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - hypersense
+
+  # Solid Queue Worker (background jobs)
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["./bin/jobs"]
+    environment:
+      RAILS_ENV: production
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      # Database configuration
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_DATABASE: ${POSTGRES_DB:-hypersense_production}
+      DATABASE_USER: ${POSTGRES_USER:-hypersense}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-hypersense_dev}
+      DATABASE_CACHE_DATABASE: ${POSTGRES_DB:-hypersense_production}_cache
+      DATABASE_QUEUE_DATABASE: ${POSTGRES_DB:-hypersense_production}_queue
+      DATABASE_CABLE_DATABASE: ${POSTGRES_DB:-hypersense_production}_cable
+      JOB_CONCURRENCY: ${JOB_CONCURRENCY:-2}
+      # LLM Provider Configuration (workers need this for AI jobs)
+      LLM_PROVIDER: ${LLM_PROVIDER:-anthropic}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-4-5}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash-exp}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+      OLLAMA_API_BASE: ${OLLAMA_API_BASE:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3}
+      # Hyperliquid Trading (workers execute trades)
+      HYPERLIQUID_PRIVATE_KEY: ${HYPERLIQUID_PRIVATE_KEY:-}
+      HYPERLIQUID_ADDRESS: ${HYPERLIQUID_ADDRESS:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - hypersense
+
+  # React Frontend with Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - hypersense
+
+volumes:
+  postgres_data:
+
+networks:
+  hypersense:
+    driver: bridge

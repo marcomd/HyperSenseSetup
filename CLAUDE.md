@@ -146,7 +146,7 @@ See `backend/README.md` for detailed architecture including Risk Management Laye
   - `LLM::` - LLM-agnostic client wrapper (supports Anthropic, Gemini, Ollama, OpenAI)
   - `Reasoning::` - LLM agents with weighted context (see `backend/README.md` for context weights)
   - `Execution::` - Trade execution via Hyperliquid
-  - `Risk::` - Risk management (position limits, circuit breaker)
+  - `Risk::` - Risk management (position limits, circuit breaker, risk profiles)
 
 - **API Controllers**: REST API in `app/controllers/api/v1/`:
   - `DashboardController` - Aggregated dashboard data
@@ -154,6 +154,7 @@ See `backend/README.md` for detailed architecture including Risk Management Laye
   - `DecisionsController` - Trading decisions history
   - `MarketDataController` - Current market data and indicators
   - `MacroStrategiesController` - Macro strategy history
+  - `RiskProfilesController` - Risk profile switching (Cautious/Moderate/Fearless)
 
 - **WebSocket Channels**: Real-time updates via ActionCable:
   - `DashboardChannel` - Market, position, decision, strategy updates
@@ -255,8 +256,8 @@ Hyperliquid credentials use direct `ENV.fetch()` for security.
 - Foundation (Rails setup, PostgreSQL, Solid Queue)
 - Data Pipeline (price/sentiment fetching, indicators)
 - Reasoning Engine (macro strategy + trading decision LLM agents)
-- Risk Management (position limits, circuit breaker, max drawdown)
+- Risk Management (position limits, circuit breaker, max drawdown, risk profiles)
 - Execution Layer (Hyperliquid integration, paper trading mode)
-- React Dashboard (real-time monitoring, WebSocket updates)
+- React Dashboard (real-time monitoring, WebSocket updates, risk profile selector)
 
 **Current Version:** They are indicated in the respective readme
