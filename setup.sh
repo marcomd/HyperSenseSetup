@@ -30,6 +30,18 @@ if [ ! -f ".env" ]; then
     echo ""
     echo "[*] Creating .env from template..."
     cp .env.docker.example .env
+
+    # Auto-generate SECRET_KEY_BASE
+    echo "[*] Generating SECRET_KEY_BASE..."
+    SECRET_KEY=$(openssl rand -hex 64)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        sed -i '' "s/^SECRET_KEY_BASE=$/SECRET_KEY_BASE=$SECRET_KEY/" .env
+    else
+        # Linux
+        sed -i "s/^SECRET_KEY_BASE=$/SECRET_KEY_BASE=$SECRET_KEY/" .env
+    fi
+
     echo "[!] Please edit .env with your configuration"
 else
     echo ""
@@ -43,9 +55,9 @@ echo "==================================="
 echo ""
 echo "Next steps:"
 echo "  1. Edit .env with your configuration:"
-echo "     - RAILS_MASTER_KEY (from backend/config/master.key)"
 echo "     - POSTGRES_PASSWORD"
 echo "     - LLM_PROVIDER and API key"
+echo "     (SECRET_KEY_BASE was auto-generated)"
 echo ""
 echo "  2. Start the application:"
 echo "     docker compose up -d --build"

@@ -30,6 +30,12 @@ if not exist ".env" (
     echo.
     echo [*] Creating .env from template...
     copy .env.docker.example .env
+
+    REM Auto-generate SECRET_KEY_BASE using PowerShell
+    echo [*] Generating SECRET_KEY_BASE...
+    for /f "delims=" %%i in ('powershell -Command "[System.BitConverter]::ToString([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(64)).Replace('-','')"') do set SECRET_KEY=%%i
+    powershell -Command "(Get-Content .env) -replace '^SECRET_KEY_BASE=$', 'SECRET_KEY_BASE=%SECRET_KEY%' | Set-Content .env"
+
     echo [!] Please edit .env with your configuration
 ) else (
     echo.
@@ -43,9 +49,9 @@ echo ===================================
 echo.
 echo Next steps:
 echo   1. Edit .env with your configuration:
-echo      - RAILS_MASTER_KEY (from backend\config\master.key)
 echo      - POSTGRES_PASSWORD
 echo      - LLM_PROVIDER and API key
+echo      (SECRET_KEY_BASE was auto-generated)
 echo.
 echo   2. Start the application:
 echo      docker compose up -d --build
